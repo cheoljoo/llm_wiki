@@ -18,11 +18,16 @@ YYYY-MM-DD-<project>-<slug>.md
 ```yaml
 ---
 date: 2026-07-06
+start_time: 13:50:12
+end_time: 14:32:07
 project: payment-service
 source_repo: /data01/cheoljoo.lee/code/payment-service
 tags: [retry, kafka]
 digested: false
 ---
 ```
+
+- `end_time`: `/wiki-log` 실행 시점 (`date` 명령으로 정확히 구함).
+- `start_time`: 이번 세션 중 변경된 파일들의 최초 수정시각으로 추정 (변경 파일이 없으면 `end_time`과 동일).
 
 `digested: false`인 항목이 다음 `/wiki-digest` 실행 시 처리 대상입니다.
