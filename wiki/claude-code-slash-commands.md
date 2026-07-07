@@ -1,5 +1,7 @@
 # Claude Code 커스텀 슬래시 커맨드
 
+커스텀 슬래시 커맨드 파일에는 `user-invocable: true` frontmatter가 있어야 사용자가 직접 호출할 수 있다.
+
 ## `user-invocable: true` frontmatter 필수
 
 `.claude/commands/*.md`나 프로젝트 내 다른 위치(`tooling/commands/*.md` 등)에 정의한 커스텀 슬래시 커맨드 파일은
