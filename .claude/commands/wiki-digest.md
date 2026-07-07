@@ -1,5 +1,6 @@
 ---
 description: log/의 미처리 원본 기록을 읽어 wiki/ 주제 문서로 정제·통합한다
+user-invocable: true
 ---
 
 이 저장소(llm_wiki)의 `log/*.md` 중 frontmatter `digested`가 `false`이거나 없는 파일을 모두 찾아라.
