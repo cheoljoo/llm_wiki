@@ -5,7 +5,7 @@ end_time: 09:29:51
 project: llm_wiki
 source_repo: /data01/cheoljoo.lee/code/llm_wiki
 tags: [claude-code, slash-commands, frontmatter]
-digested: false
+digested: true
 ---
 
 # 커스텀 슬래시 커맨드에는 `user-invocable: true` frontmatter가 필요
