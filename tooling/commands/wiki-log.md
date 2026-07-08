@@ -8,6 +8,7 @@ user-invocable: true
 
 이 대화에서 지금까지 한 작업 중 재사용 가치가 있는 것(버그 수정, 설계 결정과 이유, 트러블슈팅 과정, 배운 점, 막혔던 부분과 해결법 등)을
 간결하게 정리하라. 단순 진행상황이 아니라 나중에 다른 프로젝트에서도 참고할 만한 내용 위주로 쓴다.
+Jira/Confluence MCP 도구가 연결되어 있다면, 이 세션과 관련된 최근 Jira 이슈/Confluence 페이지 작업 내용도 함께 반영한다 (아래 1.5번 참고).
 사용자가 `$ARGUMENTS`로 특정 주제/힌트를 줬다면 그것을 우선 반영한다.
 
 다음 순서로 실행한다:
@@ -15,6 +16,10 @@ user-invocable: true
 1. `cat ~/.config/llm_wiki/repo_path`를 실행해서 `WIKI_REPO_PATH`를 얻는다.
    파일이 없거나 비어있으면, 아직 설치가 안 된 것이므로 다음과 같이 안내하고 **중단한다** (경로를 추측하지 않는다):
    "먼저 `mkdir -p ~/.config/llm_wiki && echo '<본인의 llm_wiki clone 절대경로>' > ~/.config/llm_wiki/repo_path`로 한 번 설정해주세요."
+1.5. `mcp-atlassian` MCP 도구(Jira/Confluence 조회)가 이 세션에 연결되어 있는지 확인한다. 연결되어 있으면 이번 세션과 관련된
+   본인의 최근 Jira 이슈(코멘트/상태 변경 등)와 최근 수정한 Confluence 페이지를 조회해서, 재사용 가치가 있는 내용이면
+   본문에 반영하고 이슈 키/페이지 링크를 함께 남긴다. **이 단계는 best-effort다** — 도구가 연결되어 있지 않거나 조회가
+   실패해도 무시하고 나머지 단계(git 기반 기록)는 그대로 진행한다. 관련 없는 이슈/페이지까지 억지로 끌어오지 않는다.
 2. `date +'%Y-%m-%d %H:%M:%S'`를 실행해서 `end_time`을 정확히 구한다 (추측하지 말고 반드시 실행해서 값을 얻는다). 이 값은 `YYYY-MM-DD HH:MM:SS` 형태로 **날짜를 포함해서** 그대로 `end_time`에 쓴다.
 3. `start_time`을 추정한다: 현재 작업 디렉토리가 git 저장소면
    `git status --porcelain --untracked-files=all | awk '{print $2}' | xargs -r stat -c '%y %n' | sort | head -1`
