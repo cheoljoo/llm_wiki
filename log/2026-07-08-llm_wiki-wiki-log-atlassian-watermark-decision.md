@@ -6,7 +6,7 @@ project: llm_wiki
 source_repo: /data01/cheoljoo.lee/code/llm_wiki
 branch: main
 tags: [wiki-log, mcp-atlassian, jira, confluence, design-decision]
-digested: false
+digested: true
 ---
 
 # wiki-log의 Jira/Confluence 조회를 "세션 관련성" 필터에서 "워터마크 기반 diff"로 변경

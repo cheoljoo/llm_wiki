@@ -7,7 +7,7 @@ project: llm_wiki
 source_repo: /data01/cheoljoo.lee/code/llm_wiki
 branch: main
 tags: [claude-code, llm_wiki, log-schema, multi-user]
-digested: false
+digested: true
 ---
 
 # `/wiki-digest` 흐름 확인 + log frontmatter에 `who`/`branch` 필드 추가

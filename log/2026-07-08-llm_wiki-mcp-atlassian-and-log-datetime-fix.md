@@ -6,7 +6,7 @@ project: llm_wiki
 source_repo: /data01/cheoljoo.lee/code/llm_wiki
 branch: main
 tags: [claude-code, mcp, atlassian, jira, confluence, log-schema, security]
-digested: false
+digested: true
 ---
 
 # log frontmatter의 start_time/end_time 날짜 누락 버그 수정 + mcp-atlassian 연동

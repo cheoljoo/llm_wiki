@@ -7,7 +7,7 @@ project: llm_wiki
 source_repo: /data01/cheoljoo.lee/code/llm_wiki
 branch: main
 tags: [mcp-atlassian, jira, troubleshooting]
-digested: false
+digested: true
 ---
 
 # mcp-atlassian: jira_get_all_projects 응답 폭주 주의

@@ -5,7 +5,7 @@ end_time: 16:55:10
 project: hermes
 source_repo: /data01/cheoljoo.lee/code/hermes
 tags: [llm-fallback, openrouter, error-handling, telegram, pairing, security, hermes-agent]
-digested: false
+digested: true
 ---
 
 # Hermes: LLM fallback 설정과 Telegram pairing 코드의 보안 설계

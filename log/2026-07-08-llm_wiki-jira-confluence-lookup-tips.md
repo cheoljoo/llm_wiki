@@ -6,7 +6,7 @@ project: llm_wiki
 source_repo: /data01/cheoljoo.lee/code/llm_wiki
 branch: main
 tags: [mcp-atlassian, jira, confluence]
-digested: false
+digested: true
 ---
 
 # mcp-atlassian로 최근 Jira 이슈 조회 & llm_wiki 프로젝트의 Jira 추적 이슈

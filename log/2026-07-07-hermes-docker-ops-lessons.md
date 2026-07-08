@@ -5,7 +5,7 @@ end_time: 13:51:44
 project: hermes
 source_repo: /data01/cheoljoo.lee/code/hermes
 tags: [docker, docker-compose, permissions, telegram, openrouter, kanban, crontab, debugging]
-digested: false
+digested: true
 ---
 
 # Hermes Docker 운영 중 겪은 재사용 가능한 교훈들
