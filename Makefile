@@ -30,6 +30,8 @@ help:
 
 # ── Claude Code ──────────────────────────────────────────────────────────────
 
+all: install install-copilot
+
 install: install-repo-path install-command
 
 update: install-command
