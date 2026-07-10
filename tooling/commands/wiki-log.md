@@ -41,13 +41,23 @@ Jira/Confluence MCP 도구가 연결되어 있다면, 지난 `/wiki-log` 실행 
    d. Jira: `cat ~/.config/llm_wiki/jira_last_checked`로 마지막 확인 시각(`YYYY-MM-DD HH:MM`)을 읽는다.
       파일이 없으면 최초 실행이므로 2번에서 구한 `end_time`에서 3일 전을 기준으로 삼는다.
       `assignee = currentUser() AND updated > "<마지막 확인 시각>" ORDER BY updated ASC` JQL로 그 이후 갱신된
-      이슈를 조회한다. 결과가 있으면 이슈 키/요약/상태/갱신 시각을 로그 본문에 `## Jira 업데이트` 절로 남긴다
-      (현재 프로젝트와 무관해도 모두 반영 — "새로 생긴 변경사항" 자체가 기록 대상이다). 조회에 성공했다면
-      (결과가 없어도) `~/.config/llm_wiki/jira_last_checked`를 2번에서 구한 `end_time`으로 덮어써서 다음 실행의 기준점으로 삼는다.
+      이슈를 조회한다. 결과가 있으면 **각 이슈에 대해 다음을 추가로 수행한다**:
+      - `jira_get_issue`로 이슈 본문(description)을 읽는다.
+      - `jira_get_comments`(또는 동등한 comments 조회 도구)로 댓글 목록을 읽는다.
+      - 제목만 기록하지 않고, 본문 요약(핵심 문제·배경·조치사항)과 최근 댓글 요약을
+        함께 기록한다. 단, 내용이 없거나 기록 가치가 없다고 판단되면 "(내용 없음)"으로 표기한다.
+      로그 본문에 `## Jira 업데이트` 절로 남긴다 (현재 프로젝트와 무관해도 모두 반영).
+      조회에 성공했다면(결과가 없어도) `~/.config/llm_wiki/jira_last_checked`를 2번에서 구한 `end_time`으로
+      덮어써서 다음 실행의 기준점으로 삼는다.
    e. Confluence: `cat ~/.config/llm_wiki/confluence_last_checked`로 마지막 확인 시각을 읽는다 (없으면 d와 동일하게
       3일 전을 기준으로 삼는다). `contributor = currentUser() AND lastModified > "<마지막 확인 시각>"` CQL로 그
-      이후 수정된 페이지를 조회한다. 결과가 있으면 페이지 제목/스페이스/링크/수정 시각을 `## Confluence 업데이트`
-      절로 남긴다. 조회에 성공했다면 `~/.config/llm_wiki/confluence_last_checked`를 2번에서 구한 `end_time`으로 덮어쓴다.
+      이후 수정된 페이지를 조회한다. 결과가 있으면 **각 페이지에 대해 다음을 추가로 수행한다**:
+      - `confluence_get_page`로 페이지 본문을 읽는다.
+      - `confluence_get_comments`로 댓글 목록을 읽는다.
+      - 제목만 기록하지 않고, 본문 요약(주요 변경 내용·결정사항)과 최근 댓글 요약을
+        함께 기록한다. 내용이 없거나 기록 가치가 없다고 판단되면 "(내용 없음)"으로 표기한다.
+      페이지 제목/스페이스/링크/수정 시각과 함께 `## Confluence 업데이트` 절로 남긴다.
+      조회에 성공했다면 `~/.config/llm_wiki/confluence_last_checked`를 2번에서 구한 `end_time`으로 덮어쓴다.
 4. `start_time`을 추정한다: 현재 작업 디렉토리가 git 저장소면
    `git status --porcelain --untracked-files=all | awk '{print $2}' | xargs -r stat -c '%y %n' | sort | head -1`
    로 이번 세션 중 변경된 파일들 중 가장 이른 수정시각을 구한다. 이 출력(`YYYY-MM-DD HH:MM:SS.nnnnnnnnn +ZZZZ`)에서 날짜와 시각(`YYYY-MM-DD HH:MM:SS`)까지만 잘라서 `start_time`으로 쓴다 — 세션이 자정을 넘겨 `end_time`과 날짜가 다를 수 있으므로 시각만 남기지 말 것.
