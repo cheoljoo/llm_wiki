@@ -18,18 +18,33 @@ Jira/Confluence MCP 도구가 연결되어 있다면, 지난 wiki-log 실행 이
    파일이 없거나 비어있으면, 아직 설치가 안 된 것이므로 다음과 같이 안내하고 **중단한다** (경로를 추측하지 않는다):
    "먼저 `mkdir -p ~/.config/llm_wiki && echo '<본인의 llm_wiki clone 절대경로>' > ~/.config/llm_wiki/repo_path`로 한 번 설정해주세요."
 2. `date +'%Y-%m-%d %H:%M:%S'`를 실행해서 `end_time`을 정확히 구한다 (추측하지 말고 반드시 실행해서 값을 얻는다). 이 값은 `YYYY-MM-DD HH:MM:SS` 형태로 **날짜를 포함해서** 그대로 `end_time`에 쓴다.
-3. `mcp-atlassian` MCP 도구(Jira/Confluence 조회)가 이 세션에 연결되어 있는지 확인한다. 연결되어 있으면
-   "지난 실행 이후 새로 생긴 변경사항"만 골라서 반영한다 (매번 전체를 다시 훑지 않도록, 마지막으로 확인한 시각을
-   개인 설정 파일에 워터마크로 남겨 다음 실행 때 그 이후 것만 조회한다). **이 단계 전체는 best-effort다** —
-   도구가 연결되어 있지 않거나 조회/파일 읽기·쓰기가 실패해도 무시하고 나머지 단계(git 기반 기록)는 그대로 진행한다.
+3. `mcp-atlassian` MCP 도구(Jira/Confluence 조회)가 이 세션에 연결되어 있는지 확인한다. **이 단계 전체는 best-effort다** —
+   최종적으로 도구를 사용할 수 없어도 나머지 단계(git 기반 기록)는 그대로 진행한다.
 
-   a. Jira: `cat ~/.config/llm_wiki/jira_last_checked`로 마지막 확인 시각(`YYYY-MM-DD HH:MM`)을 읽는다.
+   연결 여부는 다음 절차로 확인한다:
+
+   a. **연결 확인**: 가벼운 MCP 도구 호출 한 번으로 `mcp-atlassian`이 현재 세션에 살아있는지 체크한다
+      (예: `assignee = currentUser() AND updated > "<end_time 기준 1시간 전>"` JQL로 `jira_search` 호출).
+   b. **미연결 시 기동 시도**: 도구 호출이 실패하거나 도구 자체가 보이지 않으면, 터미널에서
+      `uvx mcp-atlassian --help 2>&1 | head -3` (또는 `npx -y mcp-atlassian --help 2>&1 | head -3`)을
+      실행해 패키지 설치 여부를 확인한다.
+      - 명령이 정상 실행되면(exit 0): "⚠️ mcp-atlassian 패키지는 설치돼 있으나 현재 세션에 MCP 서버로
+        등록되어 있지 않습니다. VS Code / Claude Code를 재시작하거나 MCP 설정을 확인한 뒤 다시
+        `/wiki-log`를 실행하면 Jira/Confluence 항목도 기록됩니다."라고 사용자에게 알린다.
+      - 명령이 실패하면(명령 없음 또는 오류): "⚠️ mcp-atlassian을 찾을 수 없습니다(`uvx`/`npx` 모두
+        실패). Jira/Confluence 항목은 이번 기록에서 제외됩니다."라고 알린다.
+      어느 경우든 step 4 이후는 그대로 진행한다.
+   c. **연결되어 있으면** "지난 실행 이후 새로 생긴 변경사항"만 골라서 반영한다 (매번 전체를 다시
+      훑지 않도록, 마지막으로 확인한 시각을 개인 설정 파일에 워터마크로 남겨 다음 실행 때 그 이후
+      것만 조회한다).
+
+   d. Jira: `cat ~/.config/llm_wiki/jira_last_checked`로 마지막 확인 시각(`YYYY-MM-DD HH:MM`)을 읽는다.
       파일이 없으면 최초 실행이므로 2번에서 구한 `end_time`에서 3일 전을 기준으로 삼는다.
       `assignee = currentUser() AND updated > "<마지막 확인 시각>" ORDER BY updated ASC` JQL로 그 이후 갱신된
       이슈를 조회한다. 결과가 있으면 이슈 키/요약/상태/갱신 시각을 로그 본문에 `## Jira 업데이트` 절로 남긴다
       (현재 프로젝트와 무관해도 모두 반영 — "새로 생긴 변경사항" 자체가 기록 대상이다). 조회에 성공했다면
       (결과가 없어도) `~/.config/llm_wiki/jira_last_checked`를 2번에서 구한 `end_time`으로 덮어써서 다음 실행의 기준점으로 삼는다.
-   b. Confluence: `cat ~/.config/llm_wiki/confluence_last_checked`로 마지막 확인 시각을 읽는다 (없으면 a와 동일하게
+   e. Confluence: `cat ~/.config/llm_wiki/confluence_last_checked`로 마지막 확인 시각을 읽는다 (없으면 d와 동일하게
       3일 전을 기준으로 삼는다). `contributor = currentUser() AND lastModified > "<마지막 확인 시각>"` CQL로 그
       이후 수정된 페이지를 조회한다. 결과가 있으면 페이지 제목/스페이스/링크/수정 시각을 `## Confluence 업데이트`
       절로 남긴다. 조회에 성공했다면 `~/.config/llm_wiki/confluence_last_checked`를 2번에서 구한 `end_time`으로 덮어쓴다.
