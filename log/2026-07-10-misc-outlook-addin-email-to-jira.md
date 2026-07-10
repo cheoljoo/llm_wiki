@@ -7,7 +7,7 @@ project: misc
 source_repo: /home/cheoljoo.lee/code/misc
 branch: main
 tags: [outlook, office-addin, office.js, jira, jira-server, jira-rest-api, personal-access-token, webpack, manifest-xml]
-digested: false
+digested: true
 ---
 
 # Outlook Office.js Add-in: Email to Jira (jira.lge.com)

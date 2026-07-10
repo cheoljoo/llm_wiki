@@ -1,0 +1,1 @@
+../../tooling/copilot-prompts/wiki-log.prompt.md
