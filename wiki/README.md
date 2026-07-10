@@ -8,7 +8,7 @@
 
 ## Claude Code / llm_wiki 자체
 
-- [claude-code-slash-commands](claude-code-slash-commands.md) — 커스텀 슬래시 커맨드 작성 시 주의할 frontmatter 필드
+- [claude-code-slash-commands](claude-code-slash-commands.md) — 커스텀 슬래시 커맨드 작성 시 주의할 frontmatter 필드, VS Code Copilot 스킬 등록 패턴
 - [claude-code-agent-permissions](claude-code-agent-permissions.md) — auto-mode가 제3자에게 영향 주는 모호한 승인을 자동 차단하는 사례
 - [llm-wiki-log-schema](llm-wiki-log-schema.md) — llm_wiki 자체 log/ 스키마와 /wiki-log 설계 변경 이력
 
@@ -30,6 +30,14 @@
 ## 프로젝트별 노트
 
 - [hermes-agent-ops](hermes-agent-ops.md) — Hermes 에이전트(Telegram pairing, Kanban dispatcher) 운영 노트
+
+## 업무 도구 / 외부 서비스 통합
+
+- [outlook-officejs-jira](outlook-officejs-jira.md) — Outlook Office.js task pane add-in으로 Jira Server(v2) 이슈 생성 패턴
+
+## Python 패턴
+
+- [python-patterns](python-patterns.md) — 재사용 가능한 Python 구현 패턴 (builtins.print 오버라이드 등)
 
 <!-- /wiki-digest가 새 주제를 추가할 때마다, 맞는 카테고리(## 섹션) 아래에 항목을 추가합니다.
 어느 카테고리에도 안 맞으면 새 ## 섹션을 만들어도 됩니다.

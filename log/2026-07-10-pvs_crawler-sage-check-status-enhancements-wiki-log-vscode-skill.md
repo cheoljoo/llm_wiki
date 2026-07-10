@@ -6,7 +6,7 @@ project: pvs_crawler
 source_repo: /home/cheoljoo.lee/code/pvs_crawler
 branch: master
 tags: [sage-check-status, print-timestamp, wiki-log, vscode-copilot, skill]
-digested: false
+digested: true
 ---
 
 # sage-check-status.py 출력 개선 및 wiki-log VS Code Copilot 스킬 설정
