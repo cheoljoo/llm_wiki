@@ -6,7 +6,7 @@ project: pvs_crawler
 source_repo: /home/cheoljoo.lee/code/pvs_crawler
 branch: master
 tags: [sage-check-status, type-mismatch, echo, csv-export, teams-webhook, shell-script, python]
-digested: false
+digested: true
 ---
 
 # sage-check-status.py 타입 불일치 분석 강화 + CSV 출력 + Teams ON/OFF

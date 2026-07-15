@@ -35,6 +35,39 @@
   `JIRA_PROJECTS_FILTER` 환경변수로 서버 설정에서 필터링해두거나, 단순 연결 확인 목적이라면
   `jira_search`에 좁은 JQL을 주는 등 더 가벼운 조회를 쓰는 게 낫다.
 
+## VS Code Copilot에서 연동하려면 전역 MCP 서버 설정이 별도로 필요
+
+`/wiki-log` 스킬의 Jira/Confluence 자동 반영 단계는 Claude Code에서는
+`~/.claude/commands/wiki-log.md`로 동작하지만, VS Code Copilot에서는 `mcp-atlassian` MCP 서버가
+VS Code 쪽에 별도로 연결돼 있어야 같은 단계가 동작한다. `uvx`로 이미 설치돼 있다면(버전 확인만
+하면 됨) 추가 설치 없이 설정만 하면 된다.
+
+1. 인증 정보를 `~/.config/mcp-atlassian/.env`에 저장 (`JIRA_URL`, `JIRA_PERSONAL_TOKEN`,
+   `CONFLUENCE_URL`, `CONFLUENCE_PERSONAL_TOKEN`, `JIRA_SSL_VERIFY=false` 등). PAT는 평문으로
+   들어가므로 `chmod 600`으로 권한을 좁혀둘 것.
+2. VS Code **전역** `settings.json`(`~/.config/Code/User/settings.json`)의 `mcp.servers`에 등록:
+   ```json
+   {
+     "mcp": {
+       "servers": {
+         "mcp-atlassian": {
+           "type": "stdio",
+           "command": "uvx",
+           "args": ["--python=3.13", "mcp-atlassian", "--env-file", "/home/<user>/.config/mcp-atlassian/.env"]
+         }
+       }
+     }
+   }
+   ```
+   `--python=3.13`이 필요한 이유: `mcp-atlassian`이 Python 3.13 환경에서 정상 동작하기 때문.
+   전역 설정에 두면 모든 워크스페이스에서 동작하고, 프로젝트별로 격리하려면 워크스페이스
+   `.vscode/mcp.json`을 대신 쓰면 된다.
+3. `Developer: Reload Window` 또는 VS Code 재시작 후 Copilot Chat의 MCP 서버 목록에
+   `mcp-atlassian`이 뜨면 연결 완료. MCP가 연결 안 돼 있어도 `/wiki-log`의 Jira/Confluence 단계는
+   best-effort로 skip되고 git 기반 기록은 그대로 진행된다([[llm-wiki-log-schema]] 참고).
+
+[^pvs_crawler]
+
 ## Confluence 조회 시 CQL 날짜 필터를 곧이곧대로 믿지 말 것
 
 `confluence_search`에 `contributor = currentUser() AND lastModified > "startOfWeek()"`와
@@ -51,3 +84,6 @@
 
 [^llm_wiki]: `llm_wiki` 프로젝트(`/data01/cheoljoo.lee/code/llm_wiki`) 자체 세션에서 mcp-atlassian을
   연동하고 써보며 확인한 내용.
+
+[^pvs_crawler]: `pvs_crawler` 프로젝트(`/home/cheoljoo.lee/code/pvs_crawler`) 세션에서 VS Code
+  Copilot용 mcp-atlassian 전역 설정을 구성하며 확인한 내용. [[pvs-crawler-sage-llm-pipeline]]
