@@ -6,7 +6,7 @@ project: pvs_crawler
 source_repo: /home/cheoljoo.lee/code/pvs_crawler
 branch: master
 tags: [mcp-atlassian, vscode-copilot, mcp, jira, confluence, wiki-log, settings]
-digested: false
+digested: true
 ---
 
 # VS Code Copilot에서 mcp-atlassian 연결 설정 (wiki-log Jira/Confluence 단계 활성화)

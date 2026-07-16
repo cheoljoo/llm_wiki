@@ -6,7 +6,7 @@ project: llm_wiki
 source_repo: /data01/cheoljoo.lee/code/llm_wiki
 branch: main
 tags: [jira, agiledev, pyautogui, llm, wiki-log]
-digested: false
+digested: true
 ---
 
 # Jira AGILEDEV 이슈 업데이트 (2026-07-09 ~ 2026-07-10)

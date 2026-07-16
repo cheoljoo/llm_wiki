@@ -6,7 +6,7 @@ project: pvs_crawler
 source_repo: /home/cheoljoo.lee/code/pvs_crawler
 branch: master
 tags: [exaone, semaphore, adaptive-worker, slot-timeout, sage_llm_summary, threading]
-digested: false
+digested: true
 ---
 
 # EXAONE 슬롯 획득 실패 원인 분석 및 adaptive worker 증가 비활성화

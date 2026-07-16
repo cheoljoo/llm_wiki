@@ -6,7 +6,7 @@ project: pvs_crawler
 source_repo: /home/cheoljoo.lee/code/pvs_crawler
 branch: master
 tags: [sage-check-status, type-mismatch, level2, ticket-count, csv-export, empty-value, orjson, wiki-doc]
-digested: false
+digested: true
 ---
 
 # sage-check-status.py 타입 분석 정확도 대폭 개선 (L1/L2 분리, 빈값, list_c/nc 인코딩)

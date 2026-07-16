@@ -6,7 +6,7 @@ project: pvs_crawler
 source_repo: /home/cheoljoo.lee/code/pvs_crawler
 branch: master
 tags: [teams-webhook, bash, uv, venv, pipenv, loop-count, count-only, sage, shell-script]
-digested: false
+digested: true
 ---
 
 # Teams Webhook 알림 + uv venv 분리 + 루프 수 자동 계산

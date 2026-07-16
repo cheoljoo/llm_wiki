@@ -25,11 +25,12 @@
 ## 인프라 운영 (Docker / Shell)
 
 - [docker-compose-ops](docker-compose-ops.md) — 같은 이미지를 쓰는 다중 서비스 docker-compose 운영 시 체크포인트
-- [shell-cli-gotchas](shell-cli-gotchas.md) — 아주 긴 경로를 인자로 주면 CLI가 알 수 없는 에러를 낼 수 있음
+- [shell-cli-gotchas](shell-cli-gotchas.md) — 긴 경로 인자, bash `$()` 괄호 파싱, printf 줄바꿈, uv/pipenv venv 충돌 등 셸/CLI 함정 모음
 
 ## 프로젝트별 노트
 
 - [hermes-agent-ops](hermes-agent-ops.md) — Hermes 에이전트(Telegram pairing, Kanban dispatcher) 운영 노트
+- [pvs-crawler-sage-llm-pipeline](pvs-crawler-sage-llm-pipeline.md) — pvs_crawler의 sage_llm_summary/sage-check-status 파이프라인: EXAONE adaptive worker 설계, 타입 불일치 분석, 루프/알림 운영 패턴
 
 ## 업무 도구 / 외부 서비스 통합
 

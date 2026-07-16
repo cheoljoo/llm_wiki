@@ -6,7 +6,7 @@ project: pvs_crawler
 source_repo: /home/cheoljoo.lee/code/pvs_crawler
 branch: master
 tags: [sage_llm_summary, exaone, adaptive-worker, preloaded-rows, timeout, key-list]
-digested: false
+digested: true
 ---
 
 # sage_llm_summary.py — EXAONE 안정화 및 preloaded_rows 지원
