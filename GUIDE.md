@@ -12,8 +12,9 @@ make install
 
 `make install`이 하는 일:
 - `~/.config/llm_wiki/repo_path`에 이 clone의 절대경로 기록
-- `tooling/commands/{wiki-log,wiki-recall,wiki-report,wiki-todo}.md`를 `~/.claude/commands/`로 복사
-  (어느 프로젝트에서든 `/wiki-log`, `/wiki-recall`, `/wiki-report`, `/wiki-todo`를 바로 쓸 수 있게 됨)
+- `tooling/commands/{wiki-log,wiki-recall,wiki-report,wiki-todo,wiki-project-done}.md`를
+  `~/.claude/commands/`로 복사 (어느 프로젝트에서든 `/wiki-log`, `/wiki-recall`, `/wiki-report`,
+  `/wiki-todo`, `/wiki-project-done`을 바로 쓸 수 있게 됨)
 
 git으로 저장소를 업데이트한 뒤(`git pull`)에는 `make update`만 다시 실행하면 최신 커맨드로 갱신됩니다.
 
@@ -201,6 +202,21 @@ Jira/Confluence 변경사항도 함께 반영합니다. 특정 주제를 우선 
 언급된 뒤 14일 넘게 어떤 로그에도 다시 안 나온 이슈("정체 후보")를 찾아줍니다. log에 남은 스냅샷
 기반이므로 실제 최신 상태는 필요하면 Jira에서 재확인하세요.
 
+### `/wiki-project-done [프로젝트명]` — 프로젝트 마무리 요약 문서 생성
+
+```
+/wiki-project-done
+/wiki-project-done pvs_crawler
+```
+
+다른 커맨드들과 달리 **llm_wiki가 아니라 정리하려는 그 프로젝트 저장소 안에서 실행**합니다.
+llm_wiki의 `log/`·`wiki/`에서 이 프로젝트와 관련된 내용만 모아, 호출한 저장소 루트에
+`wiki-project.md`를 새로 만들어줍니다 — 작업 타임라인, 관련 Jira 이슈, wiki에 정제된 설계 결정·
+트러블슈팅 요약(원본 wiki 문서 경로 포함)이 담깁니다. 인자를 생략하면 현재 디렉터리 이름을
+프로젝트명으로 쓰고, log에 기록된 `project` 값이 디렉터리명과 다르면 인자로 명시적으로 넘깁니다.
+llm_wiki 쪽은 읽기만 하고, 만든 파일의 git add/commit은 하지 않으므로 검토 후 프로젝트 저장소에서
+직접 커밋하면 됩니다.
+
 ## 4. 활용 아이디어 더 보기
 
 `/wiki-recall`, `/wiki-report`, `/wiki-todo`로 커버되는 것 외에, log/wiki가 쌓이면 할 수 있는 것들:
@@ -220,8 +236,8 @@ Jira/Confluence 변경사항도 함께 반영합니다. 특정 주제를 우선 
   다듬어 "이번 주 한 일 공유" 메시지 초안으로 씁니다.
 - **정기 자동화와 결합**: `/loop` 스킬과 조합해 매주 특정 요일에 `/wiki-report 이번 주`를 자동
   실행하고 결과를 파일로 저장해두면, 주간 보고 작성 시점에 다시 뒤지지 않아도 됩니다.
-- **프로젝트 종료 시 lessons-learned 문서화**: 프로젝트가 끝나면 그 프로젝트 이름으로
-  `/wiki-recall <project>`를 돌려 그동안 쌓인 트러블슈팅·결정 이력을 모으고, `/wiki-digest`로
-  최종 정제해 회고 문서의 뼈대로 삼습니다.
+- **프로젝트 종료 시 lessons-learned 문서화**: 프로젝트가 끝나면 그 프로젝트 저장소에서
+  `/wiki-project-done`을 실행해 타임라인·설계 결정·트러블슈팅을 모은 `wiki-project.md`를 만들고,
+  이를 회고 문서의 뼈대로 삼습니다.
 - **Jira 티켓 생성 전 중복 작업 방지**: 새 이슈를 등록하기 전에 `/wiki-recall <증상 키워드>`로 과거에
   비슷한 문제를 이미 해결한 적 있는지 먼저 확인합니다.
