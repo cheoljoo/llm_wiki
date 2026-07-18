@@ -4,6 +4,9 @@ COMMANDS_DIR := $(HOME)/.claude/commands
 COPILOT_PROMPTS_DIR := $(HOME)/.config/llm_wiki/copilot-prompts
 REPO_PATH   := $(CURDIR)
 
+# 어느 프로젝트에서든 호출해야 하는 user-level 커맨드들 (wiki-digest는 이 저장소 안에서만 쓰므로 제외)
+USER_COMMANDS := wiki-log wiki-recall wiki-report wiki-todo wiki-project-done
+
 # VS Code user settings.json 경로 (Linux 기본값)
 VSCODE_SETTINGS := $(HOME)/.config/Code/User/settings.json
 
@@ -14,10 +17,11 @@ VSCODE_SETTINGS := $(HOME)/.config/Code/User/settings.json
 
 help:
 	@echo "=== Claude Code ==="
-	@echo "make install           - repo_path 설정 + wiki-log Claude 커맨드 설치 (최초 1회)"
-	@echo "make update            - wiki-log Claude 커맨드만 다시 복사 (git pull 후)"
+	@echo "make install           - repo_path 설정 + wiki-* Claude 커맨드 설치 (최초 1회)"
+	@echo "                         ($(USER_COMMANDS))"
+	@echo "make update            - wiki-* Claude 커맨드만 다시 복사 (git pull 후)"
 	@echo "make install-repo-path - ~/.config/llm_wiki/repo_path 만 설정"
-	@echo "make install-command   - tooling/commands/wiki-log.md 를 ~/.claude/commands/ 로 복사"
+	@echo "make install-command   - tooling/commands/wiki-*.md 를 ~/.claude/commands/ 로 복사"
 	@echo ""
 	@echo "=== GitHub Copilot ==="
 	@echo "make install-copilot   - repo_path 설정 + wiki-log Copilot 프롬프트 설치"
@@ -26,7 +30,7 @@ help:
 	@echo "                         (wiki-digest 는 .github/prompts/ 에 이미 있으므로 별도 설치 불필요)"
 	@echo ""
 	@echo "=== 제거 ==="
-	@echo "make uninstall         - 설치된 wiki-log 커맨드와 repo_path 설정 제거"
+	@echo "make uninstall         - 설치된 wiki-* 커맨드와 repo_path 설정 제거"
 
 # ── Claude Code ──────────────────────────────────────────────────────────────
 
@@ -43,8 +47,10 @@ install-repo-path:
 
 install-command:
 	@mkdir -p $(COMMANDS_DIR)
-	@cp tooling/commands/wiki-log.md $(COMMANDS_DIR)/wiki-log.md
-	@echo "wiki-log Claude 커맨드 설치: $(COMMANDS_DIR)/wiki-log.md"
+	@for cmd in $(USER_COMMANDS); do \
+		cp tooling/commands/$$cmd.md $(COMMANDS_DIR)/$$cmd.md; \
+		echo "$$cmd Claude 커맨드 설치: $(COMMANDS_DIR)/$$cmd.md"; \
+	done
 
 # ── GitHub Copilot ───────────────────────────────────────────────────────────
 
@@ -75,7 +81,7 @@ _print-copilot-vscode-hint:
 # ── 제거 ──────────────────────────────────────────────────────────────────────
 
 uninstall:
-	@rm -f $(COMMANDS_DIR)/wiki-log.md
+	@for cmd in $(USER_COMMANDS); do rm -f $(COMMANDS_DIR)/$$cmd.md; done
 	@rm -f $(COPILOT_PROMPTS_DIR)/wiki-log.prompt.md
 	@rm -f $(CONFIG_DIR)/repo_path
-	@echo "wiki-log 커맨드 및 repo_path 설정을 제거했습니다."
+	@echo "wiki-* 커맨드($(USER_COMMANDS)) 및 repo_path 설정을 제거했습니다."
