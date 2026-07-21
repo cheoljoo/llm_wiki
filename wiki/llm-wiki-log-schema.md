@@ -39,9 +39,11 @@
 
 처음에는 "이 세션/프로젝트와 관련된" Jira 이슈·Confluence 페이지만 골라 반영했는데, 실제로 필요한
 건 프로젝트 관련성과 무관하게 "지난 실행 이후 새로 생긴 변경사항" 자체를 추적하는 것이었다. 그래서
-`~/.config/llm_wiki/jira_last_checked`, `confluence_last_checked`에 마지막 확인 시각을 워터마크로
-저장하고, 다음 실행부터는 그 이후 갱신된 항목만 조회(JQL/CQL의 `updated`/`lastModified` 비교)하도록
-바꿨다. 워터마크가 없으면(최초 실행) 3일 전을 기본값으로 삼는다.
+`~/.config/llm_wiki/jira_last_checked`, `confluence_last_checked`(및 이후 추가된
+`git_last_checked`)에 마지막 확인 시각을 워터마크로 저장하고, 다음 실행부터는 그 이후 갱신된
+항목만 조회(JQL/CQL의 `updated`/`lastModified` 비교, git은 `--since`)하도록 바꿨다. 워터마크가
+없으면(최초 실행) 7일(1주일) 전을 기본값으로 삼는다 — `/wiki-log`가 대략 주 1회 실행되는 사용
+패턴에 맞춘 것으로, 처음엔 3일이었다가 놓치는 구간이 많아 조정했다.
 
 **알려진 한계**: 이 워터마크는 `~/.config/llm_wiki/` 아래 시스템별 로컬 파일이라 git으로 동기화되지
 않는다. 여러 시스템에서 각자 `/wiki-log`를 실행하면 워터마크가 독립적으로 진행되어, 같은
