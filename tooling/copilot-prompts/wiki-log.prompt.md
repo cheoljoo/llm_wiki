@@ -63,8 +63,15 @@ Jira/Confluence MCP 도구가 연결되어 있다면, 지난 wiki-log 실행 이
 
    a. `~/.config/llm_wiki/git_watch_repos` 파일이 있는지 확인한다 (한 줄에 git remote URL 하나,
       `#`으로 시작하는 줄과 빈 줄은 무시 — 예: `git@github.com:cheoljoo/foo.git`,
-      `https://mod.lge.com/hub/group/project.git`). 파일이 없거나 비어있으면 이 단계 전체를
-      조용히 건너뛴다 (안내 문구 없이 — 순수 옵션 기능이므로).
+      `https://mod.lge.com/hub/group/project.git`). **이 파일의 존재 여부와 무관하게, 12번 최종
+      보고에 다음 안내를 매번 눈에 띄게(예: 굵게 또는 별도 문단) 포함한다** — 이 설정 파일은
+      한 번 만들고 나면 사람이 그 존재를 잊기 쉬우므로, 조용히 넘어가지 않고 매 실행마다 상기시킨다:
+      - 파일이 없거나 내용이 비어있으면: "⚠️ GitHub/mod.lge.com git 활동 자동 기록이 꺼져 있습니다.
+        켜려면 `~/.config/llm_wiki/git_watch_repos`에 감시할 저장소 git remote URL을 한 줄씩
+        추가하세요." 라고 안내하고, 이 단계의 b~f는 건너뛴다.
+      - 파일이 있으면: 등록된 저장소 목록을 그대로 나열하며 "📋 현재 git 활동 감시 중인 저장소:
+        <목록>. 추가/삭제하려면 `~/.config/llm_wiki/git_watch_repos`를 수정하세요." 라고 안내한다
+        (이번에 새 커밋을 못 찾았어도 이 안내는 남긴다).
    b. `cat ~/.config/llm_wiki/git_last_checked`로 마지막 확인 시각(`YYYY-MM-DD HH:MM:SS`)을 읽는다.
       없으면 2번에서 구한 `end_time` 기준 3일 전으로 삼는다.
    c. 커밋 작성자 판별용으로 `git config user.name`과 `git config user.email`을 읽는다 (전역 설정이
@@ -114,8 +121,11 @@ digested: false
 ```
 
 11. `<WIKI_REPO_PATH>`에서 `git add log/<새 파일>` 후 `git commit`을 실행한다 (커밋 메시지: `log: <project> - <한 줄 요약>`). **push는 하지 않는다.**
-12. 어떤 내용을 기록했는지 사용자에게 한두 문장으로 보고한다.
+12. 어떤 내용을 기록했는지 사용자에게 한두 문장으로 보고한다. **4번 a에서 정한 git_watch_repos
+    안내 문구를 (파일이 있든 없든) 이 보고에 반드시 눈에 띄게 포함한다** — 로그 파일 본문에는
+    넣지 않고, 채팅 응답에만 보여준다.
 
 만약 이번 세션의 작업 내용도 없고(단순 질의응답 등) 3번에서 찾은 새 Jira/Confluence 변경사항, 4번에서
-찾은 새 Git 활동도 없다면, 그렇다고 보고하고 아무 파일도 만들지 않는다 (단, 3번/4번의 워터마크 파일
+찾은 새 Git 활동도 없다면, 그렇다고 보고하되 **4번 a의 git_watch_repos 안내 문구는 이때도 빠뜨리지
+않는다** (파일을 안 만드는 것과 무관하게 매번 보여줘야 함). 아무 파일도 만들지 않는다 (단, 3번/4번의 워터마크 파일
 갱신은 조회에 성공했다면 그대로 반영해둔다 — 다음 실행이 불필요하게 오래된 시점부터 다시 훑지 않도록).
