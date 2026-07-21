@@ -52,10 +52,15 @@ if [ -z "$plugin_root" ]; then
 fi
 log "Plugin root: $plugin_root"
 
-config_block() {
+# Split in two: the [keys] table can only be declared once per file, so the
+# override assignments must be spliced into an existing [keys] table if one
+# is already present. [[keys.command]] is an array-of-tables and can safely
+# repeat/append anywhere, so it's always just appended at the end.
+KEY_OVERRIDE_NAMES="focus_pane_left focus_pane_down focus_pane_up focus_pane_right previous_workspace next_workspace previous_tab next_tab"
+
+keys_overrides_block() {
   cat <<EOF
 $MARKER_BEGIN
-[keys]
 # Free up prefix+h/j/k/l so the plugin bindings below can claim them
 # (built-in defaults would otherwise conflict with the same chord).
 focus_pane_left = ""
@@ -68,7 +73,13 @@ previous_workspace = "ctrl+shift+up"
 next_workspace = "ctrl+shift+down"
 previous_tab = "ctrl+shift+left"
 next_tab = "ctrl+shift+right"
+$MARKER_END
+EOF
+}
 
+commands_block() {
+  cat <<EOF
+$MARKER_BEGIN
 [[keys.command]]
 key = "prefix+h"
 type = "plugin_action"
@@ -99,14 +110,38 @@ EOF
 mkdir -p "$HERDR_CONFIG_DIR"
 if [ ! -f "$CONFIG_TOML" ]; then
   log "Creating $CONFIG_TOML"
-  { echo "# herdr configuration"; echo; config_block; } > "$CONFIG_TOML"
+  { echo "# herdr configuration"; echo; echo "[keys]"; keys_overrides_block; echo; commands_block; } > "$CONFIG_TOML"
 elif grep -qF "$MARKER_BEGIN" "$CONFIG_TOML" 2>/dev/null; then
   log "$CONFIG_TOML already has the managed block, skipping."
+elif ! grep -qE '^\[keys\][[:space:]]*$' "$CONFIG_TOML" 2>/dev/null; then
+  log "No existing [keys] table in $CONFIG_TOML — appending managed section."
+  { echo; echo "[keys]"; keys_overrides_block; echo; commands_block; } >> "$CONFIG_TOML"
 else
-  snippet="$HERDR_CONFIG_DIR/config.toml.${PLUGIN_ID}.snippet"
-  config_block > "$snippet"
-  warn "$CONFIG_TOML already exists — not auto-editing it (a bare [keys] table can only appear once in TOML)."
-  warn "Merge $snippet into it by hand, then run: herdr config check && herdr server reload-config"
+  # [keys] table already exists — only safe to splice our overrides into it
+  # if none of our key names are already assigned there (TOML forbids
+  # duplicate keys in the same table).
+  existing_keys_body="$(awk '/^\[keys\][[:space:]]*$/{f=1;next} /^\[/{f=0} f' "$CONFIG_TOML")"
+  conflicts=""
+  for k in $KEY_OVERRIDE_NAMES; do
+    if printf '%s\n' "$existing_keys_body" | grep -qE "^${k}[[:space:]]*="; then
+      conflicts="$conflicts $k"
+    fi
+  done
+
+  if [ -z "$conflicts" ]; then
+    log "Merging overrides into existing [keys] table in $CONFIG_TOML."
+    keys_block="$(keys_overrides_block)"
+    awk -v block="$keys_block" '
+      { print }
+      /^\[keys\][[:space:]]*$/ && !inserted { print block; inserted=1 }
+    ' "$CONFIG_TOML" > "$CONFIG_TOML.tmp" && mv "$CONFIG_TOML.tmp" "$CONFIG_TOML"
+    commands_block >> "$CONFIG_TOML"
+  else
+    snippet="$HERDR_CONFIG_DIR/config.toml.${PLUGIN_ID}.snippet"
+    { keys_overrides_block; echo; commands_block; } > "$snippet"
+    warn "$CONFIG_TOML already assigns:$conflicts under [keys] — not auto-merging to avoid clobbering your settings."
+    warn "Merge $snippet into it by hand, then run: herdr config check && herdr server reload-config"
+  fi
 fi
 
 vim_source_line="source ${plugin_root}/editor/vim.vim"
