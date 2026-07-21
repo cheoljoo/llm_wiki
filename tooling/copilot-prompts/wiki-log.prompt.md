@@ -39,7 +39,7 @@ Jira/Confluence MCP 도구가 연결되어 있다면, 지난 wiki-log 실행 이
       것만 조회한다).
 
    d. Jira: `cat ~/.config/llm_wiki/jira_last_checked`로 마지막 확인 시각(`YYYY-MM-DD HH:MM`)을 읽는다.
-      파일이 없으면 최초 실행이므로 2번에서 구한 `end_time`에서 3일 전을 기준으로 삼는다.
+      파일이 없으면 최초 실행이므로 2번에서 구한 `end_time`에서 7일(1주일) 전을 기준으로 삼는다 (wiki-log는 보통 1주일에 1번 실행되므로).
       `assignee = currentUser() AND updated > "<마지막 확인 시각>" ORDER BY updated ASC` JQL로 그 이후 갱신된
       이슈를 조회한다. 결과가 있으면 **각 이슈에 대해 다음을 추가로 수행한다**:
       - `jira_get_issue`로 이슈 본문(description)을 읽는다.
@@ -50,7 +50,7 @@ Jira/Confluence MCP 도구가 연결되어 있다면, 지난 wiki-log 실행 이
       조회에 성공했다면(결과가 없어도) `~/.config/llm_wiki/jira_last_checked`를 2번에서 구한 `end_time`으로
       덮어써서 다음 실행의 기준점으로 삼는다.
    e. Confluence: `cat ~/.config/llm_wiki/confluence_last_checked`로 마지막 확인 시각을 읽는다 (없으면 d와 동일하게
-      3일 전을 기준으로 삼는다). `contributor = currentUser() AND lastModified > "<마지막 확인 시각>"` CQL로 그
+      7일(1주일) 전을 기준으로 삼는다). `contributor = currentUser() AND lastModified > "<마지막 확인 시각>"` CQL로 그
       이후 수정된 페이지를 조회한다. 결과가 있으면 **각 페이지에 대해 다음을 추가로 수행한다**:
       - `confluence_get_page`로 페이지 본문을 읽는다.
       - `confluence_get_comments`로 댓글 목록을 읽는다.
@@ -73,7 +73,7 @@ Jira/Confluence MCP 도구가 연결되어 있다면, 지난 wiki-log 실행 이
         <목록>. 추가/삭제하려면 `~/.config/llm_wiki/git_watch_repos`를 수정하세요." 라고 안내한다
         (이번에 새 커밋을 못 찾았어도 이 안내는 남긴다).
    b. `cat ~/.config/llm_wiki/git_last_checked`로 마지막 확인 시각(`YYYY-MM-DD HH:MM:SS`)을 읽는다.
-      없으면 2번에서 구한 `end_time` 기준 3일 전으로 삼는다.
+      없으면 2번에서 구한 `end_time` 기준 7일(1주일) 전으로 삼는다 (wiki-log는 보통 1주일에 1번 실행되므로).
    c. 커밋 작성자 판별용으로 `git config user.name`과 `git config user.email`을 읽는다 (전역 설정이
       없으면 7번에서 구할 `who` 값으로 대체).
    d. 목록의 각 URL에 대해:
