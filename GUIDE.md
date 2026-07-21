@@ -141,7 +141,47 @@ Claude Code와 별개로 VS Code Copilot Chat에서도 `mcp-atlassian`을 쓰려
 
 더 자세한 함정 목록은 [wiki/mcp-atlassian.md](wiki/mcp-atlassian.md) 참고.
 
-## 3. 슬래시 커맨드 사용법
+## 3. GitHub / mod.lge.com 저장소의 git 활동 자동 조회 (옵션)
+
+`/wiki-log`가 Jira/Confluence 외에, 평소 작업하는 GitHub·사내 mod.lge.com/mod 저장소의 최근
+커밋도 `## Git 활동` 절로 함께 기록하게 할 수 있습니다. **없어도 `/wiki-log`는 정상 동작**하고
+(이 부분만 조용히 생략됨) 순수 옵션입니다.
+
+### 3.1 감시할 저장소 목록 등록
+
+```bash
+mkdir -p ~/.config/llm_wiki
+cat > ~/.config/llm_wiki/git_watch_repos <<'EOF'
+# 한 줄에 하나씩 git remote URL. #으로 시작하는 줄과 빈 줄은 무시됩니다.
+git@github.com:cheoljoo/llm_wiki.git
+https://mod.lge.com/hub/<group>/<project>.git
+EOF
+```
+
+- URL은 로컬에서 `git clone`/`git fetch` 가능해야 합니다 — GitHub는 보통 SSH 키, mod.lge.com은
+  사내 계정 인증(SSH 키 또는 credential helper)이 미리 설정돼 있어야 합니다. 인증이 안 돼 있으면
+  해당 저장소만 건너뛰고 나머지는 그대로 진행됩니다.
+- 커밋 작성자 판별은 `git config user.name` / `user.email`을 씁니다. GitHub와 mod.lge.com에서
+  서로 다른 이메일을 쓴다면, 두 저장소에서 커밋을 찾을 수 있도록 로컬(프로젝트별) git config에
+  각각 맞는 `user.email`이 설정돼 있는지 확인하세요.
+
+### 3.2 동작 방식
+
+- 목록의 각 URL을 `~/.cache/llm_wiki/git-mirrors/`에 bare mirror로 클론해두고, 이후 실행부터는
+  `git fetch`로 갱신만 합니다 (매번 전체를 새로 받지 않음).
+- Jira/Confluence와 같은 방식으로 `~/.config/llm_wiki/git_last_checked`에 마지막 확인 시각을
+  워터마크로 남겨, 다음 실행부터는 그 이후 커밋만 조회합니다.
+- 저장소 접근(clone/fetch)이 실패해도 다른 저장소·나머지 `/wiki-log` 단계는 그대로 진행됩니다
+  (best-effort).
+
+### 3.3 트러블슈팅
+
+- **특정 저장소만 계속 실패**: `git clone --bare --filter=blob:none <url> /tmp/test-mirror`를
+  터미널에서 직접 실행해 인증/네트워크 문제인지 먼저 확인하세요.
+- **mod.lge.com 커밋이 하나도 안 잡힘**: 해당 저장소의 로컬 `user.email`이 GitHub용과 다른 경우
+  흔합니다 (3.1 참고). `git log --all --author=<이메일>`로 직접 필터링해 실제로 잡히는지 확인하세요.
+
+## 4. 슬래시 커맨드 사용법
 
 ### `/wiki-log` — 지금 세션에서 배운 것 기록
 
@@ -217,7 +257,7 @@ llm_wiki의 `log/`·`wiki/`에서 이 프로젝트와 관련된 내용만 모아
 llm_wiki 쪽은 읽기만 하고, 만든 파일의 git add/commit은 하지 않으므로 검토 후 프로젝트 저장소에서
 직접 커밋하면 됩니다.
 
-## 4. 활용 아이디어 더 보기
+## 5. 활용 아이디어 더 보기
 
 `/wiki-recall`, `/wiki-report`, `/wiki-todo`로 커버되는 것 외에, log/wiki가 쌓이면 할 수 있는 것들:
 
