@@ -33,6 +33,27 @@
 - `/todo-list`·`/todo-all`은 `due`가 있는 항목을 마감일 오름차순(임박한 순)으로 먼저 보여주고,
   `due`가 없는 항목은 그 뒤에 등록일 오름차순으로 보여준다. 오늘보다 지난 `due`는 경고 표시가 붙는다.
 
+## 메모 (`/todo-memo`)
+
+항목 필드 아래에 자유 형식 메모를 append-only로 쌓을 수 있다 (진행 결과, 방문 후 회의록, 나중에
+참고할 결론 등):
+
+```markdown
+## TD-0003: 이번주 안에 꼭 DC portfolio를 만들어야 한다.
+- status: open
+- due: 2026-07-26
+- ...
+
+### memo (2026-07-23 15:40, cheoljoo.lee)
+포트폴리오 초안 방향: ...
+
+### memo (2026-07-24 11:00, cheoljoo.lee)
+방문 회의록: ...
+```
+
+메모는 여러 개 쌓일 수 있고, 새 메모는 항상 그 항목의 기존 메모들 뒤에 추가되며 기존 메모는
+고치지 않는다.
+
 ## 커맨드
 
 | 커맨드 | 용도 |
@@ -42,6 +63,7 @@
 | `/todo-done [키워드]` | 완료(`done`)만 조회 |
 | `/todo-all [키워드]` | 전체 조회 |
 | `/todo-complete <ID 또는 키워드>` | 해당 항목을 완료 처리 (`status`를 `done`으로 변경) |
+| `/todo-memo <ID> <메모 내용>` | 해당 항목에 메모 추가 (append-only) |
 
 각 커맨드는 `tooling/commands/todo-*.md`에 정의돼 있고, `make install`/`make update`로
 `~/.claude/commands/`에 설치됩니다 (자세한 설치 방법은 저장소 루트 README.md 참고).

@@ -6,7 +6,7 @@ REPO_PATH   := $(CURDIR)
 
 # 어느 프로젝트에서든 호출해야 하는 user-level 커맨드들 (wiki-digest는 이 저장소 안에서만 쓰므로 제외)
 USER_COMMANDS := wiki-log wiki-recall wiki-report wiki-todo wiki-project-done \
-                 todo-register todo-list todo-done todo-all todo-complete
+                 todo-register todo-list todo-done todo-all todo-complete todo-memo
 
 # VS Code user settings.json 경로 (Linux 기본값)
 VSCODE_SETTINGS := $(HOME)/.config/Code/User/settings.json
