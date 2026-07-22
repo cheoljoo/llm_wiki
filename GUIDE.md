@@ -217,6 +217,38 @@ llm_wiki의 `log/`·`wiki/`에서 이 프로젝트와 관련된 내용만 모아
 llm_wiki 쪽은 읽기만 하고, 만든 파일의 git add/commit은 하지 않으므로 검토 후 프로젝트 저장소에서
 직접 커밋하면 됩니다.
 
+### `/todo-register <내용>` — Todo 등록
+
+```
+/todo-register 다음 릴리스 전에 herdr 스크립트 문서 업데이트
+```
+
+`todo/todos.md`에 새 항목을 추가합니다. `TD-0001`처럼 4자리 순번 ID가 자동으로 붙고,
+등록자(`git config user.name`)·등록 시각이 함께 기록됩니다. 실행할 때마다 커밋 하나를 남깁니다
+(push는 하지 않음).
+
+### `/todo-list [키워드]` / `/todo-done [키워드]` / `/todo-all [키워드]` — Todo 조회
+
+```
+/todo-list
+/todo-done
+/todo-all herdr
+```
+
+각각 미완료(`open`)만, 완료(`done`)만, 전체를 보여줍니다. 읽기 전용이며 파일을 바꾸지 않습니다.
+키워드를 인자로 주면 내용에 그 키워드가 포함된 항목만 걸러 보여줍니다.
+
+### `/todo-complete <ID 또는 키워드>` — Todo 완료 처리
+
+```
+/todo-complete TD-0001
+/todo-complete herdr 스크립트
+```
+
+해당 항목의 `status`를 `done`으로 바꾸고 완료자·완료 시각·완료 경로(`/todo-complete`)를 기록합니다.
+여러 항목이 키워드에 걸리면 어떤 것인지 되물어보고, 이미 완료된 항목이면 그대로 알려주고 중단합니다.
+실행할 때마다 커밋 하나를 남깁니다 (push는 하지 않음).
+
 ## 4. 활용 아이디어 더 보기
 
 `/wiki-recall`, `/wiki-report`, `/wiki-todo`로 커버되는 것 외에, log/wiki가 쌓이면 할 수 있는 것들:
