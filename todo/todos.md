@@ -25,6 +25,7 @@ Web/Desktop 연결할 때 쓰는 것과 동일한 방식).
 위치에 둘지 결정 필요.
 
 - status: open
+- due: -
 - registered_by: cheoljoo.lee
 - registered_at: 2026-07-23 08:08
 - completed_by: -
@@ -33,6 +34,7 @@ Web/Desktop 연결할 때 쓰는 것과 동일한 방식).
 
 ## TD-0002: 세무사 방문 / 폰 교체 방문 (교대역) 오늘 방문하여 해결해야함. 세무사는 준비한 2장을 물어보고, 사업성도 한 번 물어보면 좋을 듯하다.
 - status: open
+- due: 2026-07-23
 - registered_by: cheoljoo.lee
 - registered_at: 2026-07-23 08:11
 - completed_by: -
@@ -41,6 +43,7 @@ Web/Desktop 연결할 때 쓰는 것과 동일한 방식).
 
 ## TD-0003: 이번주 안에 꼭 DC portfolio를 만들어야 한다.
 - status: open
+- due: 2026-07-26
 - registered_by: cheoljoo.lee
 - registered_at: 2026-07-23 08:11
 - completed_by: -
