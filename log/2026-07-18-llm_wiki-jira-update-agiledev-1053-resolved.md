@@ -6,7 +6,7 @@ project: llm_wiki
 source_repo: /home/cheoljoo.lee/code/llm_wiki
 branch: main
 tags: [jira, agiledev, pvs_crawler, echo-similarity, sage-llm-summary]
-digested: false
+digested: true
 ---
 
 # Jira 변경사항 확인 (2026-07-16 15:28 이후) — AGILEDEV-1053 Resolved 전환

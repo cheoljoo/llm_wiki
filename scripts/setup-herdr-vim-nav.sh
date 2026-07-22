@@ -4,6 +4,7 @@
 #
 # What it sets up:
 #   - vim-herdr-navigation plugin (Vim split <-> herdr pane navigation)
+#   - ctrl+left/right/up/down  -> direct herdr pane navigation
 #   - prefix+h/j/k/l           -> vim-aware pane navigation (plain ctrl+h/j/k/l
 #                                 is avoided because some terminals, e.g.
 #                                 Termius, reserve it)
@@ -61,12 +62,11 @@ KEY_OVERRIDE_NAMES="focus_pane_left focus_pane_down focus_pane_up focus_pane_rig
 keys_overrides_block() {
   cat <<EOF
 $MARKER_BEGIN
-# Free up prefix+h/j/k/l so the plugin bindings below can claim them
-# (built-in defaults would otherwise conflict with the same chord).
-focus_pane_left = ""
-focus_pane_down = ""
-focus_pane_up = ""
-focus_pane_right = ""
+# Pane navigation with ctrl+arrow keys
+focus_pane_left = "ctrl+left"
+focus_pane_down = "ctrl+down"
+focus_pane_up = "ctrl+up"
+focus_pane_right = "ctrl+right"
 
 # ctrl+shift+up/down cycles workspaces ("spaces"); ctrl+shift+left/right cycles tabs.
 previous_workspace = "ctrl+shift+up"
@@ -162,7 +162,7 @@ fi
 
 if herdr config check >/dev/null 2>&1; then
   herdr server reload-config >/dev/null 2>&1 || warn "herdr server not running (or reload failed) — config will apply on next start."
-  log "Done. Test: prefix+h/j/k/l for pane nav, ctrl+shift+up/down for workspaces, ctrl+shift+left/right for tabs."
+  log "Done. Test: ctrl+left/right/up/down for pane nav, prefix+h/j/k/l for vim/herdr pane nav, ctrl+shift+up/down for workspaces, ctrl+shift+left/right for tabs."
 else
   warn "herdr config check failed — review $CONFIG_TOML before relying on it."
   herdr config check || true

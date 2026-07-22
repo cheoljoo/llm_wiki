@@ -6,7 +6,7 @@ project: llm_wiki
 source_repo: /home/cheoljoo.lee/code/llm_wiki
 branch: main
 tags: [mcp-atlassian, claude-code, wiki-log, mcp, jira, confluence]
-digested: false
+digested: true
 ---
 
 # Claude Code에서 /wiki-log의 Jira/Confluence 단계가 매번 skip되던 문제

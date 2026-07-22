@@ -6,7 +6,7 @@ project: ai_resource_management
 source_repo: /home/cheoljoo.lee/code/ai_resource_management
 branch: main
 tags: [herdr, multi-agent, gemini, agy, code-review-pingpong, resource-management-doc]
-digested: false
+digested: true
 ---
 
 # herdr로 두 CLI 에이전트(Claude/Gemini)를 같은 문서에 대해 핑퐁 리뷰시키기

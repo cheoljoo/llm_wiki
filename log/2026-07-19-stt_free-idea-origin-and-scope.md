@@ -6,7 +6,7 @@ project: stt_free
 source_repo: /home/cheoljoo/code/stt_free
 branch: main
 tags: [stt_free, hermes, aidea-origin, wiki, sop, data-centric]
-digested: false
+digested: true
 ---
 
 # stt_free 프로젝트 아이디어 출처와 배경

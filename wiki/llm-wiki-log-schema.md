@@ -39,9 +39,11 @@
 
 처음에는 "이 세션/프로젝트와 관련된" Jira 이슈·Confluence 페이지만 골라 반영했는데, 실제로 필요한
 건 프로젝트 관련성과 무관하게 "지난 실행 이후 새로 생긴 변경사항" 자체를 추적하는 것이었다. 그래서
-`~/.config/llm_wiki/jira_last_checked`, `confluence_last_checked`에 마지막 확인 시각을 워터마크로
-저장하고, 다음 실행부터는 그 이후 갱신된 항목만 조회(JQL/CQL의 `updated`/`lastModified` 비교)하도록
-바꿨다. 워터마크가 없으면(최초 실행) 3일 전을 기본값으로 삼는다.
+`~/.config/llm_wiki/jira_last_checked`, `confluence_last_checked`(및 이후 추가된
+`git_last_checked`)에 마지막 확인 시각을 워터마크로 저장하고, 다음 실행부터는 그 이후 갱신된
+항목만 조회(JQL/CQL의 `updated`/`lastModified` 비교, git은 `--since`)하도록 바꿨다. 워터마크가
+없으면(최초 실행) 7일(1주일) 전을 기본값으로 삼는다 — `/wiki-log`가 대략 주 1회 실행되는 사용
+패턴에 맞춘 것으로, 처음엔 3일이었다가 놓치는 구간이 많아 조정했다.
 
 **알려진 한계**: 이 워터마크는 `~/.config/llm_wiki/` 아래 시스템별 로컬 파일이라 git으로 동기화되지
 않는다. 여러 시스템에서 각자 `/wiki-log`를 실행하면 워터마크가 독립적으로 진행되어, 같은
@@ -53,9 +55,21 @@ Jira/Confluence 변경사항이 여러 시스템의 log에 중복 기록될 수 
 지금 시점에 동기화 복잡도를 추가할 가치가 없다고 판단했기 때문. 이 워터마크 로직을 다시 만지게 되면
 (2)/(3)을 재검토할 것.
 
+## Git 활동 자동 조회(4번 단계) 검증: "0건"과 "고장남"을 혼동하지 말 것
+
+`git_watch_repos`에 등록한 5개 저장소(GitHub HTTPS, mod.lge.com HTTPS/SSH 혼합)를 대상으로 bare mirror
+clone/fetch → `git log --all --extended-regexp --author --since` 조회 로직을 실제로 처음 돌려 검증했다.
+1곳(작업 중이던 llm_wiki)만 커밋이 잡히고 나머지 4곳은 전부 0건으로 나왔는데, 이게 `--author` 매칭
+실패(로직 결함)인지 실제로 그 기간에 커밋이 없었던 것인지 구분이 필요했다. **검증 방법**: 의심스러우면
+`--author` 필터를 뺀 채로 같은 저장소의 최근 커밋 몇 개를 별도 조회해 대조한다 — 이번 케이스는 대조
+결과 전부 "조회 시각 이후 본인 커밋이 실제로 없어서" 0건이었고, `charles.lee`/`cheoljoo.lee`처럼
+저장소마다 표기가 다른 이름도 이메일(`user.email`) 매칭으로 정상 잡히는 것도 확인됐다. **일반화된
+교훈**: 새로 만든 조회/필터링 로직에서 "결과 없음"을 받으면, 필터를 제거한 채 재조회해 대조하기 전까지는
+그것이 "정말 없다"인지 "필터가 고장났다"인지 판단하지 말 것.
+
 [[mcp-atlassian]], [[claude-code-slash-commands]]
 
 [^llm_wiki]
 
 [^llm_wiki]: `llm_wiki` 프로젝트(`/data01/cheoljoo.lee/code/llm_wiki`) 자체의
-  `tooling/commands/wiki-log.md`, `log/README.md` 스키마 변경 이력.
+  `tooling/commands/wiki-log.md`, `log/README.md` 스키마 변경 이력 및 git 활동 조회 기능 검증.

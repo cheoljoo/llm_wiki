@@ -6,7 +6,7 @@ project: hermes
 source_repo: /data01/cheoljoo.lee/code/hermes
 branch: main
 tags: [jira-catchup, ccr, echo-detection, llm-validation, gerrit, troubleshooting]
-digested: false
+digested: true
 ---
 
 # Jira/Confluence catch-up (2026-07-10 ~ 2026-07-17 갱신분)
