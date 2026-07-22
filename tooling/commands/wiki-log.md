@@ -40,13 +40,27 @@ Jira/Confluence MCP 도구가 연결되어 있다면, 지난 `/wiki-log` 실행 
 
    d. Jira: `cat ~/.config/llm_wiki/jira_last_checked`로 마지막 확인 시각(`YYYY-MM-DD HH:MM`)을 읽는다.
       파일이 없으면 최초 실행이므로 2번에서 구한 `end_time`에서 7일(1주일) 전을 기준으로 삼는다 (wiki-log는 보통 1주일에 1번 실행되므로).
-      `assignee = currentUser() AND updated > "<마지막 확인 시각>" ORDER BY updated ASC` JQL로 그 이후 갱신된
-      이슈를 조회한다. 결과가 있으면 **각 이슈에 대해 다음을 추가로 수행한다**:
+
+      두 갈래로 나눠 조회한다 — assignee 쿼리만으로는 "내가 담당은 아니지만 댓글을 달거나 상태를
+      바꾼 티켓"(예: 리뷰어로 코멘트만 남긴 경우)이 빠지기 때문이다:
+
+      - **담당 이슈**: `assignee = currentUser() AND updated > "<마지막 확인 시각>" ORDER BY updated ASC`
+        JQL로 조회한다. 결과에 잡힌 이슈는 갱신 주체가 누구든 그대로 기록 대상이다.
+      - **watch 중인 이슈**: `watcher = currentUser() AND updated > "<마지막 확인 시각>" ORDER BY updated ASC`
+        JQL로 조회한다. 이 목록은 담당 이슈와 달리 **다른 사람이 갱신한 것도 섞여 있으므로**, 각 이슈마다
+        `jira_get_comments`로 댓글 작성자를, changelog(예: `jira_batch_get_changelogs` 또는
+        `jira_get_issue`의 changelog 확장)로 상태 변경(transition) 수행자를 확인해 **본인이 마지막 확인
+        시각 이후 직접 단 댓글이나 직접 수행한 상태 변경이 있는 이슈만** 골라낸다. 본인 활동이 없는
+        이슈(제3자만 갱신한 경우)는 제외한다. 이미 담당 이슈 쿼리에 잡힌 이슈는 중복 기록하지 않는다.
+
+      위 두 갈래로 골라진 이슈 각각에 대해 다음을 추가로 수행한다:
       - `jira_get_issue`로 이슈 본문(description)을 읽는다.
       - `jira_get_comments`(또는 동등한 comments 조회 도구)로 댓글 목록을 읽는다.
       - 제목만 기록하지 않고, 본문 요약(핵심 문제·배경·조치사항)과 최근 댓글 요약을
-        함께 기록한다. 단, 내용이 없거나 기록 가치가 없다고 판단되면 "(내용 없음)"으로 표기한다.
-      로그 본문에 `## Jira 업데이트` 절로 남긴다 (현재 프로젝트와 무관해도 모두 반영).
+        함께 기록한다. watch 중인 이슈는 본인이 남긴 댓글/상태 변경 내용을 우선 요약한다.
+        단, 내용이 없거나 기록 가치가 없다고 판단되면 "(내용 없음)"으로 표기한다.
+      로그 본문에 `## Jira 업데이트` 절로 남긴다 (현재 프로젝트와 무관해도 모두 반영). 담당 이슈와
+      watch 중 이슈가 섞여 있으면 어느 쪽으로 잡힌 항목인지 구분이 되도록 표기한다(예: "(watcher로 코멘트)").
       조회에 성공했다면(결과가 없어도) `~/.config/llm_wiki/jira_last_checked`를 2번에서 구한 `end_time`으로
       덮어써서 다음 실행의 기준점으로 삼는다.
    e. Confluence: `cat ~/.config/llm_wiki/confluence_last_checked`로 마지막 확인 시각을 읽는다 (없으면 d와 동일하게
