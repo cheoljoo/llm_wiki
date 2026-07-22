@@ -25,6 +25,25 @@
 - **반영에는 새 세션이 필요**: `mcpServers`를 추가해도 이미 시작된 세션에는 반영되지 않는다. 같은
   세션 안에서 재시도해도 새로 추가한 MCP 도구가 안 보이며, 완전히 새 세션/윈도우를 열어야 로드된다.
 
+## 클라이언트별로 각자의 설정 파일에 개별 등록해야 한다
+
+여러 클라이언트(VS Code Copilot Chat, Claude Code, 다른 IDE 등)에서 같은 `mcp-atlassian` 서버를 쓰려면
+**클라이언트마다 각자의 설정 파일에 따로 등록해야 한다** — 한 클라이언트에 등록했다고 다른 클라이언트에서
+자동으로 보이지 않는다. 실제로 `/wiki-log`의 Jira/Confluence 절이 Claude Code에서 계속 "미연결" 경고만
+내던 사례가 있었는데, 원인은 `mcp-atlassian`이 VS Code Copilot Chat 설정
+(`~/.config/Code/User/settings.json`)에만 등록돼 있고, Claude Code가 읽는 `~/.claude.json`의 최상위
+`mcpServers` 키에는 전혀 없었기 때문이었다. 인증정보(`.env`)는 재사용하되, 새 클라이언트에 처음 연결할
+때는 그 클라이언트 전용 설정 파일에 등록돼 있는지부터 확인하는 게 진단의 첫 단계다:
+
+- Claude Code: `~/.claude.json`의 `mcpServers`
+- VS Code Copilot: `~/.config/Code/User/settings.json`의 `mcp.servers`
+
+진단 순서: (1) `uvx mcp-atlassian --help` (exit 0)로 패키지 설치 자체는 확인, (2) 위 클라이언트별 설정
+파일에 실제로 키가 있는지 직접 읽어서 확인(`python3 -c "json.load(...)['mcpServers']"` 등), (3) 없으면
+등록. 부수적으로, `.env` 파일 권한이 `664`처럼 풀려 있으면 `600`으로 조여둘 것(PAT 평문 포함 파일이므로).
+
+[^llm_wiki2]
+
 ## Jira 조회 팁
 
 - 담당 이슈를 최근 순으로 빠르게 보려면: `jira_search`에
@@ -87,3 +106,6 @@ VS Code 쪽에 별도로 연결돼 있어야 같은 단계가 동작한다. `uvx
 
 [^pvs_crawler]: `pvs_crawler` 프로젝트(`/home/cheoljoo.lee/code/pvs_crawler`) 세션에서 VS Code
   Copilot용 mcp-atlassian 전역 설정을 구성하며 확인한 내용. [[pvs-crawler-sage-llm-pipeline]]
+
+[^llm_wiki2]: `llm_wiki` 프로젝트 세션에서 Claude Code용 `~/.claude.json` 등록 문제를 진단·해결하며
+  확인한 내용.

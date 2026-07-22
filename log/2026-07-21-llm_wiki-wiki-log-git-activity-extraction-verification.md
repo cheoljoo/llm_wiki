@@ -6,7 +6,7 @@ project: llm_wiki
 source_repo: /home/cheoljoo.lee/code/llm_wiki
 branch: main
 tags: [wiki-log, git-activity, verification]
-digested: false
+digested: true
 ---
 
 # wiki-log의 git 활동 자동 조회(4번 단계) 5개 저장소 대상 검증

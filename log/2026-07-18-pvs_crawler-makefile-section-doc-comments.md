@@ -6,7 +6,7 @@ project: pvs_crawler
 source_repo: /home/cheoljoo.lee/code/pvs_crawler
 branch: master
 tags: [makefile, documentation, developer-experience]
-digested: false
+digested: true
 ---
 
 # 거대 Makefile 문서화 — "전체 target 개별 설명" 대신 "섹션 단위 요약"으로 스코프 조정

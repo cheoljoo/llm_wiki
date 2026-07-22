@@ -6,7 +6,7 @@ project: llm_wiki
 source_repo: /home/cheoljoo.lee/code/llm_wiki
 branch: main
 tags: [claude-code, vscode, session-persistence, jira, confluence]
-digested: false
+digested: true
 ---
 
 # VSCode Claude Code 확장 세션 재개 동작 + Jira/Confluence 동기화

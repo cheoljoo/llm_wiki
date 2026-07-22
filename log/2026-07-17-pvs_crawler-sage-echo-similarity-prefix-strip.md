@@ -6,7 +6,7 @@ project: pvs_crawler
 source_repo: /home/cheoljoo.lee/code/pvs_crawler
 branch: master
 tags: [llm-echo-detection, similarity-matching, deterministic-recovery, difflib, sage-llm-summary]
-digested: false
+digested: true
 ---
 
 # ECHO 오탐 근본원인(번역) 발견 → 유사도 기반 판정 + 결정적 prefix-strip 복구 도입

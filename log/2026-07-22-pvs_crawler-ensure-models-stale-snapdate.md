@@ -6,7 +6,7 @@ project: pvs_crawler
 source_repo: /home/cheoljoo.lee/code/pvs_crawler
 branch: master
 tags: [sage, llm_summary, exaone, ensure-models, jira-sync, mcp-atlassian]
-digested: false
+digested: true
 ---
 
 # sage-check-llm-answer.py: ensure_models에 "존재하지만 오래된(stale)" 모델도 재처리하도록 확장
