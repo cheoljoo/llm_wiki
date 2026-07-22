@@ -38,3 +38,11 @@ Web/Desktop 연결할 때 쓰는 것과 동일한 방식).
 - completed_by: -
 - completed_at: -
 - completed_via: -
+
+## TD-0003: 이번주 안에 꼭 DC portfolio를 만들어야 한다.
+- status: open
+- registered_by: cheoljoo.lee
+- registered_at: 2026-07-23 08:11
+- completed_by: -
+- completed_at: -
+- completed_via: -
