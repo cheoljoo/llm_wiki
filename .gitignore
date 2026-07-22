@@ -219,3 +219,6 @@ __marimo__/
 
 # VS Code MCP config (contains personal access tokens)
 .vscode/mcp.json
+
+# /todo-list, /todo-done, /todo-all 실행 결과 덤프 (내용이 길어질 수 있어 git에는 남기지 않음)
+todo/output/
