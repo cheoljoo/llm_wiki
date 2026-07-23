@@ -105,10 +105,25 @@ Jira/Confluence MCP 도구가 연결되어 있다면, 지난 `/wiki-log` 실행 
       전체 나열보다 핵심(무엇을 했는지)이 드러나도록 요약해도 된다.
    f. 이 단계를 (부분적으로라도) 시도했다면 `~/.config/llm_wiki/git_last_checked`를 2번에서 구한
       `end_time`으로 덮어써서 다음 실행의 기준점으로 삼는다.
-5. `start_time`을 추정한다: 현재 작업 디렉토리가 git 저장소면
-   `git status --porcelain --untracked-files=all | awk '{print $2}' | xargs -r stat -c '%y %n' | sort | head -1`
-   로 이번 세션 중 변경된 파일들 중 가장 이른 수정시각을 구한다. 이 출력(`YYYY-MM-DD HH:MM:SS.nnnnnnnnn +ZZZZ`)에서 날짜와 시각(`YYYY-MM-DD HH:MM:SS`)까지만 잘라서 `start_time`으로 쓴다 — 세션이 자정을 넘겨 `end_time`과 날짜가 다를 수 있으므로 시각만 남기지 말 것.
-   변경된 파일이 없거나(순수 대화/조사 세션) git 저장소가 아니면 `start_time`은 `end_time`과 동일하게 둔다.
+5. `start_time`을 추정한다. 현재 작업 디렉토리가 git 저장소가 아니면 바로 `start_time = end_time`으로 두고
+   넘어간다. 저장소면 아래 두 후보를 모두 구해서 **더 이른(작은) 시각을 채택**한다 — 커밋을 하나 만든
+   뒤에도 이어서 작업했을 수 있으므로 어느 한쪽만 보면 시작 시각을 늦게 잡는 오류가 난다.
+
+   - **후보 1 (미커밋 변경)**: `git status --porcelain --untracked-files=all | awk '{print $2}' | xargs -r stat -c '%y %n' | sort | head -1`
+     로 현재 dirty한 파일들 중 가장 이른 수정시각을 구한다.
+   - **후보 2 (이번 세션 중 만든 커밋)**: `<WIKI_REPO_PATH>/log/`에서 이 `<project>`로 기록된 가장 최근 로그
+     파일을 찾아 그 `end_time`을 "지난 세션이 끝난 시각"으로 삼는다(해당 프로젝트의 로그가 아직 없으면
+     24시간 전을 기준으로 삼는다). `who`(7번에서 구할 값. 이 시점에 먼저 구해도 된다)를 author로 삼아
+     `git log --author="<who>" --since="<지난 세션 end_time>" --pretty=format:'%ad' --date=format:'%Y-%m-%d %H:%M:%S' | tail -1`
+     로 그 이후 본인이 만든 커밋 중 가장 이른 것의 시각을 구한다. 커밋이 없으면 이 후보는 버린다.
+
+   두 후보 모두 없으면(dirty 파일도 없고 새 커밋도 없음 — 순수 대화/조사 세션) `start_time`은
+   `end_time`과 동일하게 둔다. 후보로 나온 시각 문자열에서 날짜와 시각(`YYYY-MM-DD HH:MM:SS`)까지만
+   잘라 쓴다 — 세션이 자정을 넘겨 `end_time`과 날짜가 다를 수 있으므로 시각만 남기지 말 것.
+
+   참고용으로 `git diff --stat`(미커밋분)과 후보 2에서 찾은 커밋들의 `git show --stat`(변경 파일 수,
+   `+`/`-` 라인 수)을 확인해두면, 로그 본문에 "무엇을 했는지"를 쓸 때 작업 규모를 가늠하는 데
+   도움이 된다 — 로그에 필수로 남겨야 하는 항목은 아니고 판단 보조용이다.
 6. 현재 작업 디렉토리 이름을 `<project>`로 사용한다 (git 저장소면 저장소 이름).
 7. `who`를 구한다: `git config user.name`을 실행한다. 비어있으면 `git config user.email`, 그것도 비어있으면 `whoami`로 대체한다 (추측하지 말고 반드시 실행해서 값을 얻는다).
 8. `branch`를 구한다: 현재 작업 디렉토리가 git 저장소면 `git rev-parse --abbrev-ref HEAD`를 실행한다. git 저장소가 아니면 `branch` 필드는 생략한다.
@@ -135,7 +150,10 @@ digested: false
 ```
 
 11. `<WIKI_REPO_PATH>`에서 `git add log/<새 파일>` 후 `git commit`을 실행한다 (커밋 메시지: `log: <project> - <한 줄 요약>`). **push는 하지 않는다.**
-12. 어떤 내용을 기록했는지 사용자에게 한두 문장으로 보고한다. **4번 a에서 정한 git_watch_repos
+12. 어떤 내용을 기록했는지 사용자에게 한두 문장으로 보고한다. `start_time`과 `end_time`이 다르면
+    (`end_time` - `start_time`) 소요 시간을 "추정 소요 시간: 약 X시간 Y분 (5번에서 채택한 후보 —
+    미커밋 변경 / 커밋 이력 — 명시)" 형태로 함께 보고한다. 두 값이 같으면(순수 대화/조사 세션)
+    소요 시간 보고는 생략한다. **4번 a에서 정한 git_watch_repos
     안내 문구를 (파일이 있든 없든) 이 보고에 반드시 눈에 띄게 포함한다** — 로그 파일 본문에는
     넣지 않고, 채팅 응답에만 보여준다.
 
