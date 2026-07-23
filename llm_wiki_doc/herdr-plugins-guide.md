@@ -8,6 +8,7 @@
 
 ## 1. 📂 herdr-file-viewer (`herdr-file-viewer`)
 *Git과 연동되는 터미널 TUI 파일 뷰어 및 탐색기*
+URL: https://github.com/smarzban/herdr-file-viewer
 
 ### 사용 방법
 * **실행**:
@@ -48,6 +49,7 @@
 
 ## 2. 🔍 reviewr (`persiyanov.reviewr`)
 *AI 에이전트 코드 변경점(Diff) 리뷰 및 GitHub PR 연동 도구*
+URL: https://github.com/persiyanov/herdr-reviewr
 
 ### 사용 방법
 * **사이드바 열기 / 닫기**:
@@ -114,6 +116,7 @@ cp target/release/herdr-reviewr bin/herdr-reviewr
 
 ## 3. 💾 herdr-resurrect (`ntindle.herdr-resurrect`)
 *Herdr 워크스페이스 구조 및 작업 상태 스냅샷 저장/복구*
+URL: https://github.com/ntindle/herdr-resurrect
 
 ### 사용 방법
 * **현재 상태 저장 (스냅샷 생성)**:
@@ -159,6 +162,7 @@ cp target/release/herdr-reviewr bin/herdr-reviewr
 
 ## 4. 🚀 Spreader (`herdr-spreader`)
 *YAML 선언적 파일을 사용한 워크스페이스 레이아웃 자동 부트스트래퍼*
+URL: https://github.com/yuk1ty/herdr-spreader
 
 ### 사용 방법
 * **레이아웃 파일 위치**: `herdr plugin action invoke apply`는 파일 경로를 인자로 받지 않습니다.
@@ -212,6 +216,7 @@ cp target/release/herdr-reviewr bin/herdr-reviewr
 
 ## 5. 💸 llmtrim (`llmtrim.proxy`)
 *AI 에이전트의 LLM API 토큰 및 요금 절감을 위한 프록시 연동*
+URL: https://github.com/fkiene/llmtrim-herdr
 
 > [!IMPORTANT]
 > 이 플러그인을 사용하려면 시스템에 `llmtrim` 글로벌 CLI 패키지가 먼저 설치되어 있어야 합니다.
