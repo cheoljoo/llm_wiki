@@ -49,3 +49,12 @@ Web/Desktop 연결할 때 쓰는 것과 동일한 방식).
 - completed_by: -
 - completed_at: -
 - completed_via: -
+
+## TD-0004: psncs.iptime.org 의 라오어 무한 매수법을 v4로 update
+- status: open
+- due: 2026-08-02
+- registered_by: cheoljoo.lee
+- registered_at: 2026-07-23 10:29
+- completed_by: -
+- completed_at: -
+- completed_via: -
