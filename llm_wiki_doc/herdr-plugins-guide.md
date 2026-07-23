@@ -74,11 +74,29 @@ URL: https://github.com/persiyanov/herdr-reviewr
   description = "코드 리뷰 사이드바 토글"
   ```
 
+### 트러블슈팅: `herdr plugin install` 자체가 curl 버전 때문에 실패함
+
+이 환경(Ubuntu 20.04, 시스템 curl `7.68.0`)에서는 GLIBC 문제 이전에, 설치 단계(`bash herdr/install.sh`)가
+먼저 실패했다:
+
+```
+curl: option --retry-all-errors: is unknown
+```
+
+원인: 그 스크립트가 쓰는 `curl --retry-all-errors` 옵션은 curl `7.71.0`부터 지원된다. 이 시스템의 apt
+저장소(focal)에는 `7.68.0`보다 새 curl이 없고 `sudo`도 비밀번호 없이는 안 써서, 시스템 curl을
+업그레이드하는 대신 conda-forge로 최신 curl을 받아 그 PATH만 일시적으로 앞세워 설치를 통과시켰다:
+
+```bash
+conda create -y -n herdr-curl -c conda-forge "curl>=8"
+PATH="$(conda info --base)/envs/herdr-curl/bin:$PATH" herdr plugin install "persiyanov/herdr-reviewr" --yes
+```
+
 ### 트러블슈팅: prebuilt 바이너리가 GLIBC 버전 불일치로 실행 안 됨
 
-`herdr plugin action invoke`로 호출해도 반응이 없거나 실패하면, `herdr plugin log list --plugin
-persiyanov.reviewr --limit 3`으로 실제 stderr를 확인해볼 것. 이 환경에서는 다음 에러로 매번 실패하고
-있었다:
+위 설치가 통과해도, `herdr plugin action invoke`로 호출하면 반응이 없거나 실패한다.
+`herdr plugin log list --plugin persiyanov.reviewr --limit 3`으로 실제 stderr를 확인해볼 것.
+이 환경에서는 다음 에러로 매번 실패했다:
 
 ```
 herdr-reviewr: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.32' not found
@@ -89,28 +107,32 @@ herdr-reviewr: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.32' not found
 있는데, 이 시스템의 glibc는 `2.31`(Ubuntu 20.04)이라 실행 자체가 안 됐다. `ldd --version`으로 시스템
 glibc 버전을 먼저 확인할 것.
 
-**해결**: 로컬 체크아웃에서 직접 빌드해 시스템 glibc에 맞는 바이너리로 교체한다 (Rust 1.97 툴체인이
-필요하며 `rustup`이 있으면 `rust-toolchain.toml`을 보고 자동으로 받는다):
+**해결**: 로컬 체크아웃에서 직접 빌드해 시스템 glibc에 맞는 바이너리로 교체한다. `rustup`도 이 환경엔
+없어서, 마찬가지로 conda-forge에서 `rust-toolchain.toml`이 요구하는 정확한 버전(`1.97.0`)을 받아 썼다:
 
 ```bash
-cd /home/cheoljoo.lee/.gemini/antigravity-cli/brain/d149040d-0e12-499c-94a0-08893c8b16c0/scratch/herdr-reviewr
-cargo build --release   # 의존성이 많아 처음엔 10분 이상 걸릴 수 있음
-cp target/release/herdr-reviewr bin/herdr-reviewr
+conda create -y -n herdr-rust -c conda-forge rust=1.97.0
+
+git clone --depth 1 https://github.com/persiyanov/herdr-reviewr.git \
+  ~/.local/share/herdr-plugins-src/herdr-reviewr
+cd ~/.local/share/herdr-plugins-src/herdr-reviewr
+PATH="$(conda info --base)/envs/herdr-rust/bin:$PATH" cargo build --release   # 11분 소요
+cp target/release/herdr-reviewr <plugin_root>/bin/herdr-reviewr   # plugin_root는 `herdr plugin list --json`으로 확인
 ```
 
 빌드 후 `ldd target/release/herdr-reviewr | grep libc`로 시스템 libc(`/lib/x86_64-linux-gnu/libc.so.6`)에
-링크됐는지 확인하고, `herdr plugin action invoke toggle --plugin persiyanov.reviewr` 후 다시
-`herdr plugin log list`로 `status: succeeded`인지 검증할 것.
+링크됐는지 확인하고(`GLIBC_2.3x not found` 줄이 없어야 함), `herdr plugin action invoke toggle --plugin
+persiyanov.reviewr` 후 다시 `herdr plugin log list`로 `status: succeeded`인지 검증할 것.
 
 ### 삭제 방법
 * 로컬 링크 해제 및 삭제:
   ```bash
   herdr plugin uninstall persiyanov.reviewr
   ```
-  *(주의: 로컬 빌드로 GLIBC 문제를 우회한 상태라면, 위 클론 디렉터리
-  `/home/cheoljoo.lee/.gemini/antigravity-cli/brain/d149040d-0e12-499c-94a0-08893c8b16c0/scratch/herdr-reviewr`의
-  `bin/herdr-reviewr`가 실제로 실행되는 바이너리다. 삭제하면 다시 GLIBC 에러가 나는 prebuilt 버전으로
-  되돌아가거나 아예 실행 안 되니, 플러그인을 완전히 삭제할 게 아니라면 지우지 말 것.)*
+  *(주의: 로컬 빌드로 GLIBC 문제를 우회한 상태라면, `~/.local/share/herdr-plugins-src/herdr-reviewr`의
+  `target/release/herdr-reviewr`가 그 우회 바이너리의 원본이다. 삭제하면 재설치 시 다시 GLIBC 에러가
+  나는 prebuilt 버전으로 되돌아가니, 플러그인을 완전히 삭제할 게 아니라면 이 클론은 지우지 말 것 —
+  재설치 후엔 위 `cp` 한 줄만 다시 실행하면 된다.)*
 
 ---
 
