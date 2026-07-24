@@ -41,6 +41,9 @@ Web/Desktop 연결할 때 쓰는 것과 동일한 방식).
 - completed_at: 2026-07-24 14:08
 - completed_via: /todo-complete
 
+### memo (2026-07-24 14:10, cheojoo)
+my_finance_tax/consulting_minutes/* 안에 정리를 해두었습니다. 전반적인 결론은 다시 계획을 세워야 한다. 법인은 상속과 건보료에만 조금 도움이 될수 있다.
+
 ## TD-0003: 이번주 안에 꼭 DC portfolio를 만들어야 한다.
 - status: open
 - due: 2026-07-26
